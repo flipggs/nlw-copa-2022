@@ -21,6 +21,7 @@ export const THEME = extendTheme({
       500: "#DB4437",
     },
     white: "#FFFFFF",
+    black: "#000000",
   },
   fonts: {
     heading: "Roboto_700Bold",
