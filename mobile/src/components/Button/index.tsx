@@ -25,6 +25,7 @@ export const Button = ({ title, type = "PRIMARY", ...props }: ButtonProps) => {
       <Text
         fontSize="sm"
         fontFamily="heading"
+        textTransform="uppercase"
         color={type === 'SECONDARY' ? 'white' : 'black'}
       >
         {title}
