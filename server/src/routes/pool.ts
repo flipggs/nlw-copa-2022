@@ -134,6 +134,7 @@ export async function pollRoutes(fastify: FastifyInstance) {
                 },
               },
             },
+            take: 4,
           },
           owner: {
             select: {
@@ -160,7 +161,7 @@ export async function pollRoutes(fastify: FastifyInstance) {
 
       const { id } = poolParams.parse(request.params);
 
-      const pool = await prisma.pool.findUnique({
+      const pool = await prisma.pool.findFirst({
         where: {
           id,
         },
@@ -179,6 +180,7 @@ export async function pollRoutes(fastify: FastifyInstance) {
                 },
               },
             },
+            take: 4,
           },
           owner: {
             select: {
