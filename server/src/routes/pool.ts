@@ -147,4 +147,49 @@ export async function pollRoutes(fastify: FastifyInstance) {
       return { pools };
     }
   );
+
+  fastify.get(
+    "/pools/:id",
+    {
+      onRequest: [authenticate],
+    },
+    async (request) => {
+      const poolParams = z.object({
+        id: z.string(),
+      });
+
+      const { id } = poolParams.parse(request.params);
+
+      const pool = await prisma.pool.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          _count: {
+            select: {
+              participants: true,
+            },
+          },
+          participants: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  avatarUrl: true,
+                },
+              },
+            },
+          },
+          owner: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return { pool };
+    }
+  );
 }
