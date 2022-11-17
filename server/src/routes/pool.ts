@@ -47,4 +47,61 @@ export async function pollRoutes(fastify: FastifyInstance) {
 
     return reply.status(201).send({ code });
   });
+
+  fastify.post(
+    "/pools/:id/join",
+    { onRequest: [authenticate] },
+    async (request, replay) => {
+      const joinPoolBody = z.object({
+        code: z.string(),
+      });
+
+      const { code } = joinPoolBody.parse(request.body);
+
+      const pool = await prisma.pool.findUnique({
+        where: {
+          code,
+        },
+        include: {
+          participants: {
+            where: {
+              userId: request.user.sub,
+            },
+          },
+        },
+      });
+
+      if (!pool) {
+        return replay.status(400).send({
+          message: "Pool not found!",
+        });
+      }
+
+      if (!pool.ownerId) {
+        await prisma.pool.update({
+          where: {
+            id: pool.id,
+          },
+          data: {
+            ownerId: request.user.sub,
+          },
+        });
+      }
+
+      if (pool.participants.length > 0) {
+        return replay.status(400).send({
+          message: "You already joined this pool!",
+        });
+      }
+
+      await prisma.participant.create({
+        data: {
+          poolId: pool.id,
+          userId: request.user.sub,
+        },
+      });
+
+      return replay.status(201).send();
+    }
+  );
 }
