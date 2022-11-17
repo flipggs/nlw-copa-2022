@@ -18,7 +18,7 @@ export const Button = ({ title, type = "PRIMARY", ...props }: ButtonProps) => {
         bg: type === 'SECONDARY' ? 'red.600' : 'yellow.600'
       }}
       _loading={{
-        _spinner: { color: 'black' }
+        _spinner: {  color: type === 'SECONDARY' ? 'white' : 'black' }
       }}
       {...props}
     >
